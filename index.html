@@ -3,111 +3,135 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FileShare — Wymiana plików</title>
+    <title>FileShare — Foldery i udostępnianie</title>
     <link rel="stylesheet" href="assets/style.css">
   </head>
   <body>
     <header class="site-header">
-      <div class="container">
-        <h1 class="brand">FileShare</h1>
-        <p class="subtitle">Szybka wymiana plików między urządzeniami — tryb chmury i P2P/WebRTC</p>
+      <div class="container hero">
+        <div>
+          <p class="eyebrow">FileShare</p>
+          <h1 class="brand">Foldery, linki i QR do udostępniania plików</h1>
+          <p class="subtitle">Konto przez e-mail, Google lub Apple. Udostępniaj foldery osobom bez konta przez link albo kod QR.</p>
+        </div>
+        <div class="hero-card">
+          <div class="stat"><strong>1</strong><span>konto</span></div>
+          <div class="stat"><strong>∞</strong><span>foldery</span></div>
+          <div class="stat"><strong>QR</strong><span>publiczny dostęp</span></div>
+        </div>
       </div>
     </header>
 
     <main class="container">
-      <div class="mode-switch" role="tablist" aria-label="Tryb działania">
-        <button id="modeCloudBtn" class="mode-btn active" type="button" data-mode="cloud">Chmura</button>
-        <button id="modeP2PBtn" class="mode-btn" type="button" data-mode="p2p">P2P</button>
-      </div>
+      <section id="authView" class="auth-grid">
+        <article class="card">
+          <h2>Zaloguj się</h2>
+          <p class="muted">Wybierz sposób logowania i przejdź do swoich folderów.</p>
 
-      <section class="uploader">
-        <div id="cloudPanel" class="mode-panel active">
-          <div id="dropZone" class="drop-zone">
-          <div class="drop-content">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M12 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M7 10l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <p>Przeciągnij pliki tutaj lub wybierz przycisk</p>
-            <input id="fileInput" type="file" multiple hidden>
-            <button id="chooseBtn" class="btn" type="button">Wybierz pliki</button>
-          </div>
-        </div>
-
-          <div id="progressArea" class="progress-area"></div>
-
-          <section class="files-list">
-            <h2>Pliki w chmurze</h2>
-            <ul id="files"></ul>
-          </section>
-        </div>
-
-        <div id="p2pPanel" class="mode-panel">
-          <div class="panel-grid">
-            <article class="card">
-              <h2>Pokój</h2>
-              <p class="muted">Utwórz pokój na jednym urządzeniu, a na drugim wpisz kod pokoju.</p>
-
-              <div class="room-actions">
-                <button id="createRoomBtn" class="btn" type="button">Utwórz pokój</button>
-                <button id="leaveRoomBtn" class="btn secondary" type="button" disabled>Rozłącz</button>
-              </div>
-
-              <label class="field">
-                <span>Kod pokoju</span>
-                <div class="inline-row">
-                  <input id="roomCode" type="text" placeholder="Kod wygeneruje się po utworzeniu pokoju" readonly>
-                  <button id="copyRoomCodeBtn" class="btn secondary" type="button">Kopiuj</button>
-                </div>
-              </label>
-
-              <label class="field">
-                <span>Dołącz do pokoju</span>
-                <div class="inline-row">
-                  <input id="joinRoomInput" type="text" placeholder="Wpisz kod pokoju">
-                  <button id="joinRoomBtn" class="btn" type="button">Połącz</button>
-                </div>
-              </label>
-
-              <div class="status-box">
-                <strong>Status:</strong> <span id="p2pStatus">Niepołączono</span>
-              </div>
-            </article>
-
-            <article class="card">
-              <h2>Wyślij pliki</h2>
-              <p class="muted">Wybierz pliki i wyślij je bezpośrednio do drugiego urządzenia.</p>
-
-              <div class="drop-zone compact" id="p2pDropZone">
-                <div class="drop-content">
-                  <p>Przeciągnij pliki tutaj lub kliknij wybór</p>
-                  <input id="p2pFileInput" type="file" multiple hidden>
-                  <button id="p2pChooseBtn" class="btn" type="button">Wybierz pliki</button>
-                </div>
-              </div>
-
-              <div class="room-actions">
-                <button id="sendFilesBtn" class="btn" type="button" disabled>Wyślij pliki</button>
-                <span id="selectedFilesLabel" class="muted">Brak plików</span>
-              </div>
-
-              <div class="progress-area" id="p2pProgressArea"></div>
-            </article>
+          <div class="auth-actions">
+            <button id="googleLoginBtn" class="btn" type="button">Google</button>
+            <button id="appleLoginBtn" class="btn secondary" type="button">Apple</button>
           </div>
 
-          <section class="files-list">
-            <h2>Odebrane pliki</h2>
-            <div id="receivedFiles" class="received-files"></div>
-          </section>
-        </div>
+          <form id="emailAuthForm" class="stack">
+            <input id="authEmail" type="email" placeholder="E-mail">
+            <input id="authPassword" type="password" placeholder="Hasło">
+            <div class="auth-actions">
+              <button id="signUpBtn" class="btn" type="submit">Załóż konto</button>
+              <button id="signInBtn" class="btn secondary" type="button">Zaloguj</button>
+            </div>
+          </form>
+
+          <p class="note">Hasło możesz ustawić samodzielnie przez e-mail i hasło. Google/Apple działa przez Firebase Auth.</p>
+        </article>
+
+        <article class="card glass">
+          <h2>Jak to działa</h2>
+          <ol class="steps">
+            <li>Zakładasz konto</li>
+            <li>Tworzysz folder</li>
+            <li>Dodajesz pliki</li>
+            <li>Udostępniasz link lub QR</li>
+            <li>Osoba bez konta otwiera folder w przeglądarce</li>
+          </ol>
+        </article>
+      </section>
+
+      <section id="appView" class="app-grid hidden">
+        <aside class="sidebar card">
+          <div class="user-row">
+            <div>
+              <strong id="userLabel">—</strong>
+              <div class="muted" id="userEmail">—</div>
+            </div>
+            <button id="logoutBtn" class="btn secondary" type="button">Wyloguj</button>
+          </div>
+
+          <div class="sidebar-section">
+            <h3>Nowy folder</h3>
+            <input id="newFolderName" type="text" placeholder="Nazwa folderu">
+            <button id="createFolderBtn" class="btn" type="button">Utwórz folder</button>
+          </div>
+
+          <div class="sidebar-section">
+            <h3>Moje foldery</h3>
+            <div id="folderList" class="folder-list"></div>
+          </div>
+        </aside>
+
+        <section class="main-content">
+          <article class="card">
+            <div class="section-head">
+              <div>
+                <h2 id="activeFolderTitle">Wybierz folder</h2>
+                <p class="muted" id="activeFolderInfo">—</p>
+              </div>
+              <div class="share-row">
+                <button id="shareLinkBtn" class="btn secondary" type="button" disabled>Udostępnij link</button>
+                <button id="shareQrBtn" class="btn secondary" type="button" disabled>QR</button>
+              </div>
+            </div>
+
+            <div class="drop-zone" id="uploadZone">
+              <div class="drop-content">
+                <p>Przeciągnij pliki tutaj lub wybierz przycisk</p>
+                <input id="fileInput" type="file" multiple hidden>
+                <button id="chooseFilesBtn" class="btn" type="button">Wybierz pliki</button>
+              </div>
+            </div>
+
+            <div id="uploadProgress" class="progress-area"></div>
+          </article>
+
+          <article class="card">
+            <h2>Pliki w folderze</h2>
+            <div id="fileList" class="file-list"></div>
+          </article>
+        </section>
+      </section>
+
+      <section id="sharedView" class="hidden">
+        <article class="card share-view">
+          <h2>Udostępniony folder</h2>
+          <p class="muted" id="sharedFolderInfo">Ładowanie…</p>
+          <div id="sharedFiles" class="file-list"></div>
+        </article>
       </section>
     </main>
 
+    <dialog id="qrDialog" class="qr-dialog">
+      <div class="qr-dialog-inner">
+        <button id="closeQrBtn" class="btn secondary close-btn" type="button">Zamknij</button>
+        <div id="qrCode" class="qr-box"></div>
+        <p class="muted">Zeskanuj kod na telefonie, aby otworzyć folder bez konta.</p>
+      </div>
+    </dialog>
+
     <footer class="site-footer">
-      <div class="container">Made with ❤️ — deploy na GitHub Pages. Instrukcje w README.</div>
+      <div class="container">FileShare — GitHub Pages + Firebase</div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script type="module" src="assets/app.js"></script>
   </body>
 </html>

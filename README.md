@@ -1,9 +1,10 @@
 # FileShare
 
-FileShare to prosta strona do wymiany plików z dwoma trybami:
+FileShare to prosta strona do wymiany plików oparta o konta i foldery:
 
-- **Chmura** — upload plików do Firebase Storage
-- **P2P** — bezpośrednia wymiana plików przez WebRTC, z sygnalizacją w Firebase Firestore
+- **Logowanie**: e-mail i hasło, Google lub Apple
+- **Foldery prywatne**: tylko dla zalogowanego właściciela
+- **Udostępnianie**: publiczny link albo QR, bez konta po stronie odbiorcy
 
 Strona działa na GitHub Pages.
 
@@ -17,7 +18,10 @@ Strona działa na GitHub Pages.
 
 1. Wejdź do Firebase Console: https://console.firebase.google.com
 2. Utwórz projekt
-3. Włącz **Authentication** → **Anonymous**
+3. Włącz **Authentication** i aktywuj:
+  - e-mail i hasło
+  - Google
+  - Apple, jeśli chcesz używać logowania Apple
 4. Włącz **Firestore Database**
 5. Włącz **Storage**
 6. Dodaj web app i skopiuj obiekt `firebaseConfig`
@@ -25,17 +29,23 @@ Strona działa na GitHub Pages.
 
 ## Reguły Firestore
 
-Użyj tego na start do testów P2P:
+Użyj tego na start do folderów i publicznego udostępniania:
 
 ```text
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /rooms/{roomId} {
-      allow read, write: if request.auth != null;
-      match /{subcollection}/{docId} {
-        allow read, write: if request.auth != null;
+    match /folders/{folderId} {
+      allow read: if request.auth != null || resource.data.isPublic == true;
+      allow write: if request.auth != null && request.auth.uid == resource.data.ownerId;
+      match /files/{fileId} {
+        allow read: if request.auth != null || get(/databases/$(database)/documents/folders/$(folderId)).data.isPublic == true;
+        allow write: if request.auth != null && request.auth.uid == get(/databases/$(database)/documents/folders/$(folderId)).data.ownerId;
       }
+    }
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
@@ -54,13 +64,12 @@ service firebase.storage {
 }
 ```
 
-## Tryb P2P
+## Jak działa udostępnianie folderu
 
-1. Otwórz stronę na dwóch urządzeniach
-2. Na pierwszym kliknij **Utwórz pokój**
-3. Skopiuj kod pokoju
-4. Na drugim wklej kod i kliknij **Połącz**
-5. Po połączeniu wybierz pliki i kliknij **Wyślij pliki**
+1. Zaloguj się
+2. Utwórz folder i dodaj pliki
+3. Kliknij **Udostępnij link** albo **QR**
+4. Odbiorca otwiera link bez logowania i widzi tylko ten folder
 
 ## Deploy na GitHub Pages
 
@@ -78,6 +87,6 @@ GitHub Pages powinien publikować branch `main`.
 
 ## Uwagi
 
-- Tryb chmury korzysta z Firebase Storage.
-- Tryb P2P korzysta z WebRTC i Firestore do sygnalizacji.
-- Jeśli chcesz, mogę dodać kod QR dla pokoju albo lepszy widok postępu transferu.
+- Foldery prywatne są tylko dla właściciela.
+- Publiczny link prowadzi do widoku tylko-do-odczytu.
+- Apple login wymaga dodatkowej konfiguracji w Firebase i po stronie Apple Developer.
