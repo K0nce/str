@@ -47,3 +47,12 @@ git push -u origin main
 - Obecna konfiguracja Storage jest prosta i wymaga, byś wkleił prawidłowy `firebaseConfig` w `assets/app.js`.
 - Możemy dodać uwierzytelnianie (Google, e-mail) i ograniczenia dostępu jeśli będziesz tego potrzebować.
 - Jeśli wolisz inny backend (np. Supabase, S3 + Cloudflare Workers), mogę przerobić integrację.
+
+## Automatyczny deploy (GitHub Pages)
+
+Dodałem workflow GitHub Actions, który automatycznie opublikuje zawartość tego repo po push na branch `main`.
+
+- Po udanym uruchomieniu akcji strona powinna być dostępna pod adresem: https://K0nce.github.io/str
+- Możesz obserwować status akcji w zakładce `Actions` w repozytorium na GitHub.
+
+Jeśli chcesz, mogę także pomóc ustawić bezpieczniejsze reguły Storage lub dodać uwierzytelnianie.
