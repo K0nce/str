@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FileShare — Wymiana plików</title>
+    <link rel="stylesheet" href="assets/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1 class="brand">FileShare</h1>
+        <p class="subtitle">Szybka wymiana plików między urządzeniami — frontend na GitHub Pages, storage w chmurze</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="uploader">
+        <div id="dropZone" class="drop-zone">
+          <div class="drop-content">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M12 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 10l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p>Przeciągnij pliki tutaj lub wybierz przycisk</p>
+            <input id="fileInput" type="file" multiple hidden>
+            <button id="chooseBtn" class="btn">Wybierz pliki</button>
+          </div>
+        </div>
+        <div id="progressArea" class="progress-area"></div>
+      </section>
+
+      <section class="files-list">
+        <h2>Pliki na serwerze</h2>
+        <ul id="files"></ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">Made with ❤️ — deploy na GitHub Pages. Instrukcje w README.</div>
+    </footer>
+
+    <script type="module" src="assets/app.js"></script>
+  </body>
+</html>
