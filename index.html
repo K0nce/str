@@ -24,25 +24,35 @@
 
     <main class="container">
       <section id="authView" class="auth-grid">
-        <article class="card">
-          <h2>Zaloguj się</h2>
-          <p class="muted">Wybierz sposób logowania i przejdź do swoich folderów.</p>
+        <article class="card signup-card">
+          <h2 class="signup-title">Utwórz konto all.rent</h2>
+          <p class="muted">Możesz założyć konto przez e-mail albo numer telefonu. Użyj adresu e-mail i hasła.</p>
 
-          <div class="auth-actions">
-            <button id="googleLoginBtn" class="btn" type="button">Google</button>
-            <button id="appleLoginBtn" class="btn secondary" type="button">Apple</button>
+          <div class="signup-tabs" role="tablist">
+            <button class="tab active" data-mode="email">E-mail<br><span class="tab-sub">Zarejestruj się z użyciem e-maila</span></button>
+            <button class="tab" data-mode="phone">Telefon<br><span class="tab-sub">Zarejestruj się z użyciem numeru telefonu</span></button>
           </div>
 
-          <form id="emailAuthForm" class="stack">
-            <input id="authEmail" type="email" placeholder="E-mail">
-            <input id="authPassword" type="password" placeholder="Hasło">
-            <div class="auth-actions">
-              <button id="signUpBtn" class="btn" type="submit">Załóż konto</button>
-              <button id="signInBtn" class="btn secondary" type="button">Zaloguj</button>
-            </div>
+          <form id="signupForm" class="stack signup-form">
+            <input id="fullName" class="signup-input" type="text" placeholder="Imię i nazwisko">
+            <input id="signupEmail" class="signup-input" type="email" placeholder="E-mail">
+            <input id="signupPassword" class="signup-input" type="password" placeholder="Hasło">
+
+            <button id="createAccountBtn" class="btn big-cta" type="submit">Załóż konto</button>
           </form>
 
-          <p class="note">Hasło możesz ustawić samodzielnie przez e-mail i hasło. Google/Apple działa przez Firebase Auth.</p>
+          <p class="or-text">LUB SKORZYSTAJ Z JEDNEJ Z TYCH OPCJI</p>
+
+          <div class="social-row">
+            <button id="appleLoginBtn" class="social-btn apple" type="button">
+              <img src="assets/apple-icon.svg" alt="" class="social-icon"> Zarejestruj przez Apple
+            </button>
+            <button id="googleLoginBtn" class="social-btn google" type="button">
+              <img src="assets/google-icon.svg" alt="G" class="social-icon"> Zarejestruj przez Google
+            </button>
+          </div>
+
+          <p class="muted small">Masz konto? <a id="goToLogin" href="#">Zaloguj się</a></p>
         </article>
 
         <article class="card glass">
@@ -132,6 +142,26 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+      // Signup tabs behavior (UI-only)
+      (function(){
+        const tabs = document.querySelectorAll('.signup-tabs .tab');
+        const emailInput = document.getElementById('signupEmail');
+        const nameInput = document.getElementById('fullName');
+        tabs.forEach(t=>t.addEventListener('click', ()=>{
+          tabs.forEach(x=>x.classList.remove('active'));
+          t.classList.add('active');
+          const mode = t.dataset.mode;
+          if(mode==='phone'){
+            emailInput.type = 'tel';
+            emailInput.placeholder = 'Numer telefonu';
+          } else {
+            emailInput.type = 'email';
+            emailInput.placeholder = 'E-mail';
+          }
+        }));
+      })();
+    </script>
     <script type="module" src="assets/app.js"></script>
   </body>
 </html>

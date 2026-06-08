@@ -9,6 +9,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js'
+import { updateProfile } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js'
 import {
   getFirestore,
   collection,
@@ -52,6 +53,11 @@ const authEmail = document.getElementById('authEmail')
 const authPassword = document.getElementById('authPassword')
 const signInBtn = document.getElementById('signInBtn')
 const signUpBtn = document.getElementById('signUpBtn')
+// signup form (new UI)
+const signupForm = document.getElementById('signupForm')
+const signupEmail = document.getElementById('signupEmail')
+const signupPassword = document.getElementById('signupPassword')
+const fullNameInput = document.getElementById('fullName')
 const logoutBtn = document.getElementById('logoutBtn')
 const userLabel = document.getElementById('userLabel')
 const userEmail = document.getElementById('userEmail')
@@ -110,30 +116,59 @@ function showShared() {
   sharedView.classList.remove('hidden')
 }
 
-googleLoginBtn.addEventListener('click', async () => {
-  try { await signInWithPopup(auth, googleProvider) } catch (e) { alert(e.message) }
-})
+if (googleLoginBtn) {
+  googleLoginBtn.addEventListener('click', async () => {
+    try { await signInWithPopup(auth, googleProvider) } catch (e) { alert(e.message) }
+  })
+}
 
-appleLoginBtn.addEventListener('click', async () => {
-  try { await signInWithPopup(auth, appleProvider) } catch (e) { alert(e.message) }
-})
+if (appleLoginBtn) {
+  appleLoginBtn.addEventListener('click', async () => {
+    try { await signInWithPopup(auth, appleProvider) } catch (e) { alert(e.message) }
+  })
+}
 
-emailAuthForm.addEventListener('submit', async e => {
-  e.preventDefault()
-  try {
-    await createUserWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value)
-  } catch (e) {
-    alert(e.message)
-  }
-})
+// Legacy email form handlers (optional UI) — guard existence
+if (emailAuthForm && authEmail && authPassword) {
+  emailAuthForm.addEventListener('submit', async e => {
+    e.preventDefault()
+    try {
+      await createUserWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value)
+    } catch (e) {
+      alert(e.message)
+    }
+  })
+}
 
-signInBtn.addEventListener('click', async () => {
-  try {
-    await signInWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value)
-  } catch (e) {
-    alert(e.message)
-  }
-})
+if (signInBtn && authEmail && authPassword) {
+  signInBtn.addEventListener('click', async () => {
+    try {
+      await signInWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value)
+    } catch (e) {
+      alert(e.message)
+    }
+  })
+}
+
+// New signup form (from the new UI)
+if (signupForm && signupEmail && signupPassword) {
+  signupForm.addEventListener('submit', async e => {
+    e.preventDefault()
+    const email = signupEmail.value.trim()
+    const pwd = signupPassword.value
+    const name = (fullNameInput && fullNameInput.value.trim()) || ''
+    if (!email || !pwd) return alert('Podaj e-mail i hasło')
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pwd)
+      if (name && cred.user) {
+        try { await updateProfile(cred.user, { displayName: name }) } catch (err) { console.warn('updateProfile failed', err) }
+      }
+      // onAuthStateChanged will switch view and subscribe
+    } catch (err) {
+      alert(err.message)
+    }
+  })
+}
 
 logoutBtn.addEventListener('click', () => signOut(auth))
 
