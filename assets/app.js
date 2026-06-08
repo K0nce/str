@@ -39,6 +39,8 @@ const auth = getAuth(app)
 const db = getFirestore(app)
 const storage = getStorage(app)
 
+const firebaseConfigured = !!(firebaseConfig && firebaseConfig.apiKey)
+
 const googleProvider = new GoogleAuthProvider()
 const appleProvider = new OAuthProvider('apple.com')
 
@@ -118,20 +120,23 @@ function showShared() {
 
 if (googleLoginBtn) {
   googleLoginBtn.addEventListener('click', async () => {
+    if (!firebaseConfigured) return alert('Firebase config not set. Wklej swoje firebaseConfig w assets/app.js')
     try { await signInWithPopup(auth, googleProvider) } catch (e) { alert(e.message) }
   })
 }
 
 if (appleLoginBtn) {
   appleLoginBtn.addEventListener('click', async () => {
+    if (!firebaseConfigured) return alert('Firebase config not set. Wklej swoje firebaseConfig w assets/app.js')
     try { await signInWithPopup(auth, appleProvider) } catch (e) { alert(e.message) }
   })
 }
 
 // Legacy email form handlers (optional UI) — guard existence
-if (emailAuthForm && authEmail && authPassword) {
+  if (emailAuthForm && authEmail && authPassword) {
   emailAuthForm.addEventListener('submit', async e => {
     e.preventDefault()
+    if (!firebaseConfigured) return alert('Firebase config not set. Wklej swoje firebaseConfig w assets/app.js')
     try {
       await createUserWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value)
     } catch (e) {
@@ -142,6 +147,7 @@ if (emailAuthForm && authEmail && authPassword) {
 
 if (signInBtn && authEmail && authPassword) {
   signInBtn.addEventListener('click', async () => {
+    if (!firebaseConfigured) return alert('Firebase config not set. Wklej swoje firebaseConfig w assets/app.js')
     try {
       await signInWithEmailAndPassword(auth, authEmail.value.trim(), authPassword.value)
     } catch (e) {
@@ -159,6 +165,7 @@ if (signupForm && signupEmail && signupPassword) {
     const name = (fullNameInput && fullNameInput.value.trim()) || ''
     if (!email || !pwd) return alert('Podaj e-mail i hasło')
     try {
+      if (!firebaseConfigured) return alert('Firebase config not set. Wklej swoje firebaseConfig w assets/app.js')
       const cred = await createUserWithEmailAndPassword(auth, email, pwd)
       if (name && cred.user) {
         try { await updateProfile(cred.user, { displayName: name }) } catch (err) { console.warn('updateProfile failed', err) }
