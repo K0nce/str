@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="assets/style.css">
   </head>
   <body>
+    <div id="configWarning" class="config-banner hidden">
+      <div class="container">
+        <strong>Uwaga:</strong> Aplikacja nie ma wklejonej konfiguracji Firebase. Aby włączyć logowanie, wklej swój `firebaseConfig` do `assets/app.js`.
+        <button id="copyConfigBtn" class="btn small">Kopiuj przykładowy config</button>
+      </div>
+    </div>
     <header class="site-header">
       <div class="container hero">
         <div>

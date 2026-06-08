@@ -82,6 +82,10 @@ input[type="text"]{width:100%;padding:10px 12px;border-radius:10px;border:1px so
 .received-item{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.03);padding:12px;border-radius:10px}
 .site-footer{padding:18px 0;border-top:1px solid rgba(255,255,255,0.03);margin-top:40px;color:var(--muted);font-size:14px}
 
+.config-banner{background:#fff6f0;color:#331400;padding:10px 0;border-bottom:1px solid #ffd8bf}
+.config-banner .container{display:flex;gap:12px;align-items:center}
+.config-banner .btn.small{margin-left:auto}
+
 /* Signup card styles (light, rounded) */
 .signup-card{background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);color:#06202a;border:0;padding:28px;border-radius:18px;box-shadow:0 10px 30px rgba(2,6,23,0.12);max-width:460px}
 .signup-title{margin:0 0 6px;font-size:1.4rem;color:#06202a}

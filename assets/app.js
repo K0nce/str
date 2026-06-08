@@ -202,6 +202,17 @@ const headerSignupBtn = document.getElementById('headerSignupBtn')
 const headerGoogleBtn = document.getElementById('headerGoogleBtn')
 const headerAppleBtn = document.getElementById('headerAppleBtn')
 
+// show config banner if not configured
+const configWarning = document.getElementById('configWarning')
+const copyConfigBtn = document.getElementById('copyConfigBtn')
+if (!firebaseConfigured && configWarning) {
+  configWarning.classList.remove('hidden')
+  if (copyConfigBtn) copyConfigBtn.addEventListener('click', async () => {
+    const sample = `const firebaseConfig = {\n  apiKey: "YOUR_API_KEY",\n  authDomain: "YOUR_PROJECT.firebaseapp.com",\n  projectId: "YOUR_PROJECT_ID",\n  storageBucket: "YOUR_PROJECT.appspot.com",\n  messagingSenderId: "SENDER_ID",\n  appId: "APP_ID"\n}`
+    try { await navigator.clipboard.writeText(sample); alert('Skopiowano przykładowy config. Wklej go do assets/app.js i uzupełnij wartości.') } catch (e) { alert('Nie udało się skopiować: ' + e.message) }
+  })
+}
+
 if (headerLoginBtn) headerLoginBtn.addEventListener('click', () => {
   authView.classList.remove('hidden')
   appView.classList.add('hidden')
