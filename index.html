@@ -19,6 +19,10 @@
           <div class="stat"><strong>∞</strong><span>foldery</span></div>
           <div class="stat"><strong>QR</strong><span>publiczny dostęp</span></div>
         </div>
+          <div class="header-actions">
+            <button id="headerLoginBtn" class="header-btn">Zaloguj</button>
+            <button id="headerSignupBtn" class="header-btn primary">Załóż konto</button>
+          </div>
       </div>
     </header>
 
@@ -27,11 +31,6 @@
         <article class="card signup-card">
           <h2 class="signup-title">Utwórz konto all.rent</h2>
           <p class="muted">Możesz założyć konto przez e-mail albo numer telefonu. Użyj adresu e-mail i hasła.</p>
-
-          <div class="signup-tabs" role="tablist">
-            <button class="tab active" data-mode="email">E-mail<br><span class="tab-sub">Zarejestruj się z użyciem e-maila</span></button>
-            <button class="tab" data-mode="phone">Telefon<br><span class="tab-sub">Zarejestruj się z użyciem numeru telefonu</span></button>
-          </div>
 
           <form id="signupForm" class="stack signup-form">
             <input id="fullName" class="signup-input" type="text" placeholder="Imię i nazwisko">
@@ -142,26 +141,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <script>
-      // Signup tabs behavior (UI-only)
-      (function(){
-        const tabs = document.querySelectorAll('.signup-tabs .tab');
-        const emailInput = document.getElementById('signupEmail');
-        const nameInput = document.getElementById('fullName');
-        tabs.forEach(t=>t.addEventListener('click', ()=>{
-          tabs.forEach(x=>x.classList.remove('active'));
-          t.classList.add('active');
-          const mode = t.dataset.mode;
-          if(mode==='phone'){
-            emailInput.type = 'tel';
-            emailInput.placeholder = 'Numer telefonu';
-          } else {
-            emailInput.type = 'email';
-            emailInput.placeholder = 'E-mail';
-          }
-        }));
-      })();
-    </script>
+    
     <script type="module" src="assets/app.js"></script>
   </body>
 </html>

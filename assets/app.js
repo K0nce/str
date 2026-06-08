@@ -176,7 +176,10 @@ onAuthStateChanged(auth, async user => {
   currentUser = user || null
   if (sharedRouteActive) return
   if (!user) {
-    showAuth()
+    // Do not force-open the auth panel on page load; stay on landing.
+    authView.classList.add('hidden')
+    appView.classList.add('hidden')
+    sharedView.classList.add('hidden')
     return
   }
   userLabel.textContent = user.displayName || 'Moje konto'
@@ -185,6 +188,29 @@ onAuthStateChanged(auth, async user => {
   await ensureUserDoc(user)
   await subscribeFolders(user.uid)
 })
+
+// Header buttons: open auth panel or quick social sign-in
+const headerLoginBtn = document.getElementById('headerLoginBtn')
+const headerSignupBtn = document.getElementById('headerSignupBtn')
+const headerGoogleBtn = document.getElementById('headerGoogleBtn')
+const headerAppleBtn = document.getElementById('headerAppleBtn')
+
+if (headerLoginBtn) headerLoginBtn.addEventListener('click', () => {
+  authView.classList.remove('hidden')
+  appView.classList.add('hidden')
+  sharedView.classList.add('hidden')
+})
+if (headerSignupBtn) headerSignupBtn.addEventListener('click', () => {
+  authView.classList.remove('hidden')
+  appView.classList.add('hidden')
+  sharedView.classList.add('hidden')
+  // focus on signup email if present
+  const e = document.getElementById('signupEmail')
+  if (e) e.focus()
+})
+// quick social buttons in header (optional) — fall back to social buttons in form
+if (headerGoogleBtn) headerGoogleBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, googleProvider) } catch(e){ alert(e.message) } })
+if (headerAppleBtn) headerAppleBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, appleProvider) } catch(e){ alert(e.message) } })
 
 async function ensureUserDoc(user) {
   const userRef = doc(db, 'users', user.uid)

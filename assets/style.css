@@ -11,6 +11,9 @@ body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;backg
 .site-header{padding:28px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
 .hero{display:flex;align-items:stretch;justify-content:space-between;gap:20px}
 .brand{margin:0;font-weight:700;letter-spacing:0.4px}
+.header-actions{display:flex;flex-direction:row;gap:10px;align-items:center}
+.header-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+.header-btn.primary{background:var(--accent);border-color:var(--accent);color:white}
 .eyebrow{margin:0 0 10px;color:#93c5fd;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem}
 .subtitle{margin:6px 0 0;color:var(--muted)}
 .muted{color:var(--muted)}
