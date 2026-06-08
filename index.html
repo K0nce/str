@@ -10,13 +10,19 @@
     <header class="site-header">
       <div class="container">
         <h1 class="brand">FileShare</h1>
-        <p class="subtitle">Szybka wymiana plików między urządzeniami — frontend na GitHub Pages, storage w chmurze</p>
+        <p class="subtitle">Szybka wymiana plików między urządzeniami — tryb chmury i P2P/WebRTC</p>
       </div>
     </header>
 
     <main class="container">
+      <div class="mode-switch" role="tablist" aria-label="Tryb działania">
+        <button id="modeCloudBtn" class="mode-btn active" type="button" data-mode="cloud">Chmura</button>
+        <button id="modeP2PBtn" class="mode-btn" type="button" data-mode="p2p">P2P</button>
+      </div>
+
       <section class="uploader">
-        <div id="dropZone" class="drop-zone">
+        <div id="cloudPanel" class="mode-panel active">
+          <div id="dropZone" class="drop-zone">
           <div class="drop-content">
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path d="M12 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -25,15 +31,76 @@
             </svg>
             <p>Przeciągnij pliki tutaj lub wybierz przycisk</p>
             <input id="fileInput" type="file" multiple hidden>
-            <button id="chooseBtn" class="btn">Wybierz pliki</button>
+            <button id="chooseBtn" class="btn" type="button">Wybierz pliki</button>
           </div>
         </div>
-        <div id="progressArea" class="progress-area"></div>
-      </section>
 
-      <section class="files-list">
-        <h2>Pliki na serwerze</h2>
-        <ul id="files"></ul>
+          <div id="progressArea" class="progress-area"></div>
+
+          <section class="files-list">
+            <h2>Pliki w chmurze</h2>
+            <ul id="files"></ul>
+          </section>
+        </div>
+
+        <div id="p2pPanel" class="mode-panel">
+          <div class="panel-grid">
+            <article class="card">
+              <h2>Pokój</h2>
+              <p class="muted">Utwórz pokój na jednym urządzeniu, a na drugim wpisz kod pokoju.</p>
+
+              <div class="room-actions">
+                <button id="createRoomBtn" class="btn" type="button">Utwórz pokój</button>
+                <button id="leaveRoomBtn" class="btn secondary" type="button" disabled>Rozłącz</button>
+              </div>
+
+              <label class="field">
+                <span>Kod pokoju</span>
+                <div class="inline-row">
+                  <input id="roomCode" type="text" placeholder="Kod wygeneruje się po utworzeniu pokoju" readonly>
+                  <button id="copyRoomCodeBtn" class="btn secondary" type="button">Kopiuj</button>
+                </div>
+              </label>
+
+              <label class="field">
+                <span>Dołącz do pokoju</span>
+                <div class="inline-row">
+                  <input id="joinRoomInput" type="text" placeholder="Wpisz kod pokoju">
+                  <button id="joinRoomBtn" class="btn" type="button">Połącz</button>
+                </div>
+              </label>
+
+              <div class="status-box">
+                <strong>Status:</strong> <span id="p2pStatus">Niepołączono</span>
+              </div>
+            </article>
+
+            <article class="card">
+              <h2>Wyślij pliki</h2>
+              <p class="muted">Wybierz pliki i wyślij je bezpośrednio do drugiego urządzenia.</p>
+
+              <div class="drop-zone compact" id="p2pDropZone">
+                <div class="drop-content">
+                  <p>Przeciągnij pliki tutaj lub kliknij wybór</p>
+                  <input id="p2pFileInput" type="file" multiple hidden>
+                  <button id="p2pChooseBtn" class="btn" type="button">Wybierz pliki</button>
+                </div>
+              </div>
+
+              <div class="room-actions">
+                <button id="sendFilesBtn" class="btn" type="button" disabled>Wyślij pliki</button>
+                <span id="selectedFilesLabel" class="muted">Brak plików</span>
+              </div>
+
+              <div class="progress-area" id="p2pProgressArea"></div>
+            </article>
+          </div>
+
+          <section class="files-list">
+            <h2>Odebrane pliki</h2>
+            <div id="receivedFiles" class="received-files"></div>
+          </section>
+        </div>
       </section>
     </main>
 

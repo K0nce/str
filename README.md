@@ -1,69 +1,49 @@
-# FileShare — prosta strona do wymiany plików
+# FileShare
 
-Ta aplikacja to statyczny frontend (GitHub Pages) z zapisem plików w Firebase Storage (darmowy poziom). Projekt zawiera prosty interfejs z drag & drop oraz listą plików.
+FileShare to prosta strona do wymiany plików z dwoma trybami:
 
-## Szybkie kroki konfiguracji (Firebase)
+- **Chmura** — upload plików do Firebase Storage
+- **P2P** — bezpośrednia wymiana plików przez WebRTC, z sygnalizacją w Firebase Firestore
 
-1. Wejdź na https://console.firebase.google.com i utwórz nowy projekt.
-2. Wybierz "Storage" i utwórz zasobnik (domyślna lokalizacja jest OK).
-3. W zakładce `Rules` ustaw tymczasowo reguły umożliwiające odczyt/zapis (przykład bez zabezpieczeń):
+Strona działa na GitHub Pages.
 
-```
+## Wymagania
+
+- konto GitHub
+- projekt Firebase
+- włączone usługi: Authentication, Firestore, Storage
+
+## Konfiguracja Firebase
+
+1. Wejdź do Firebase Console: https://console.firebase.google.com
+2. Utwórz projekt
+3. Włącz **Authentication** → **Anonymous**
+4. Włącz **Firestore Database**
+5. Włącz **Storage**
+6. Dodaj web app i skopiuj obiekt `firebaseConfig`
+7. Wklej `firebaseConfig` do `assets/app.js`
+
+## Reguły Firestore
+
+Użyj tego na start do testów P2P:
+
+```text
 rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if true;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rooms/{roomId} {
+      allow read, write: if request.auth != null;
+      match /{subcollection}/{docId} {
+        allow read, write: if request.auth != null;
+      }
     }
   }
 }
 ```
 
-   Uwaga: powyższe reguły dają publiczny dostęp. Jeśli chcesz prywatności, skonfiguruj Authentication i odpowiednie reguły.
+## Reguły Storage
 
-4. W ustawieniach projektu (ikonka z kołem zębatym) -> `Project settings` -> `Your apps` -> dodaj aplikację webową. Skopiuj konfigurację Firebase (obiekt `firebaseConfig`).
-
-5. W pliku `assets/app.js` wklej wartość `firebaseConfig` (z elementem `storageBucket`) zamiast przykładowego obiektu.
-
-## Deploy na GitHub Pages
-
-1. Zainicjuj repo w katalogu projektu, commit i wypchnij na GitHub.
-
-```
-git init
-git add .
-git commit -m "Initial FileShare site"
-git branch -M main
-git remote add origin https://github.com/USERNAME/REPO.git
-git push -u origin main
-```
-
-2. W ustawieniach repo na GitHub włącz GitHub Pages i wybierz branch `main` oraz folder `/` (root) lub użyj folderu `docs/` jeśli preferujesz.
-
-3. Po deployu strona będzie dostępna pod `https://USERNAME.github.io/REPO`.
-
-## Uwagi
-
-- Obecna konfiguracja Storage jest prosta i wymaga, byś wkleił prawidłowy `firebaseConfig` w `assets/app.js`.
-- Możemy dodać uwierzytelnianie (Google, e-mail) i ograniczenia dostępu jeśli będziesz tego potrzebować.
-- Jeśli wolisz inny backend (np. Supabase, S3 + Cloudflare Workers), mogę przerobić integrację.
-
-## Automatyczny deploy (GitHub Pages)
-
-Dodałem workflow GitHub Actions, który automatycznie opublikuje zawartość tego repo po push na branch `main`.
-
-- Po udanym uruchomieniu akcji strona powinna być dostępna pod adresem: https://K0nce.github.io/str
-- Możesz obserwować status akcji w zakładce `Actions` w repozytorium na GitHub.
-
-Jeśli chcesz, mogę także pomóc ustawić bezpieczniejsze reguły Storage lub dodać uwierzytelnianie.
-
-## Zabezpieczenie Firebase Storage (propozycja)
-
-Domyślne reguły "allow if true" są publiczne — lepiej ograniczyć zapis tylko do uwierzytelnionych użytkowników. Najprostsza opcja to włączenie **Anonymous Authentication** i ustawienie reguł Storage tak, aby tylko uwierzytelnieni użytkownicy mogli zapisywać pliki.
-
-Przykładowe reguły (dają odczyt/ zapis tylko zalogowanym):
-
-```
+```text
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
@@ -74,12 +54,30 @@ service firebase.storage {
 }
 ```
 
-Instrukcja włączenia anonimowego logowania:
+## Tryb P2P
 
-1. W konsoli Firebase przejdź do `Authentication` → `Sign-in method`.
-2. Włącz `Anonymous` i zapisz.
-3. W `Project settings` -> `Your apps` skopiuj `firebaseConfig` i wklej do `assets/app.js`.
+1. Otwórz stronę na dwóch urządzeniach
+2. Na pierwszym kliknij **Utwórz pokój**
+3. Skopiuj kod pokoju
+4. Na drugim wklej kod i kliknij **Połącz**
+5. Po połączeniu wybierz pliki i kliknij **Wyślij pliki**
 
-Klient w `assets/app.js` spróbuje automatycznego anonimowego logowania; dzięki temu użytkownicy nie muszą tworzyć kont, a jednocześnie uploady będą ograniczone do autoryzowanych sesji.
+## Deploy na GitHub Pages
 
-Jeśli chcesz silniejszą kontrolę (np. usuwanie plików, limit rozmiaru na użytkownika), mogę przygotować bardziej zaawansowane reguły i krótką funkcję Cloud Function do czyszczenia.
+Repo jest już przygotowane do automatycznego deployu przez GitHub Actions.
+
+Jeśli chcesz przejść ręcznie:
+
+```bash
+git add .
+git commit -m "Update FileShare"
+git push origin main
+```
+
+GitHub Pages powinien publikować branch `main`.
+
+## Uwagi
+
+- Tryb chmury korzysta z Firebase Storage.
+- Tryb P2P korzysta z WebRTC i Firestore do sygnalizacji.
+- Jeśli chcesz, mogę dodać kod QR dla pokoju albo lepszy widok postępu transferu.
