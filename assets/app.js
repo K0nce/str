@@ -3,6 +3,7 @@
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js'
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js'
 
 // --- CONFIG: paste your Firebase config here ---
 const firebaseConfig = {
@@ -18,10 +19,19 @@ if (!firebaseConfig || !firebaseConfig.storageBucket) {
   console.warn('Firebase config missing. Wprowadź konfigurację w assets/app.js zgodnie z README.')
 }
 
-let app, storage
+let app, storage, auth
 try{
   app = initializeApp(firebaseConfig)
   storage = getStorage(app)
+  auth = getAuth(app)
+  // try anonymous sign-in to allow secure writes without user accounts
+  signInAnonymously(auth).catch(()=>{})
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      console.log('Signed in (anonymous):', user.uid)
+      listFiles()
+    }
+  })
 }catch(e){
   // initialization may fail until config is provided
 }
@@ -69,7 +79,10 @@ function uploadFile(file){
     node.querySelector('.file-meta').textContent = 'Błąd: ' + err.message
   }, () => {
     getDownloadURL(uploadTask.snapshot.ref).then(url => {
-      node.querySelector('.file-meta').innerHTML = `<a href="${url}" target="_blank" rel="noopener">Pobierz</a>`
+      node.querySelector('.file-meta').innerHTML = `<a href="${url}" target="_blank" rel="noopener">Pobierz</a> <button class="btn small copy" data-url="${url}">Kopiuj link</button>`
+      node.querySelector('.copy')?.addEventListener('click', e=>{
+        navigator.clipboard.writeText(url).then(()=>alert('Link skopiowany'))
+      })
       // refresh file list
       listFiles()
     })
@@ -88,8 +101,10 @@ function listFiles(){
     res.items.sort((a,b)=>a.name.localeCompare(b.name))
     res.items.forEach(itemRef => {
       getDownloadURL(itemRef).then(url => {
+        const displayName = itemRef.name.replace(/^[^_]+_/, '')
         const li = document.createElement('li')
-        li.innerHTML = `<div><strong>${escapeHtml(itemRef.name)}</strong><div class="file-meta">URL: <a href="${url}" target="_blank" rel="noopener">pobierz</a></div></div><div>${(itemRef.name.match(/_(.*)$/)||[''])[0] ? '' : ''}</div>`
+        li.innerHTML = `<div><strong>${escapeHtml(displayName)}</strong><div class="file-meta">URL: <a href="${url}" target="_blank" rel="noopener">pobierz</a></div></div><div><button class="btn small copy" data-url="${url}">Kopiuj</button></div>`
+        li.querySelector('.copy')?.addEventListener('click', e=>{ navigator.clipboard.writeText(url).then(()=>alert('Link skopiowany')) })
         filesList.appendChild(li)
       })
     })

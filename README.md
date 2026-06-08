@@ -56,3 +56,30 @@ Dodałem workflow GitHub Actions, który automatycznie opublikuje zawartość te
 - Możesz obserwować status akcji w zakładce `Actions` w repozytorium na GitHub.
 
 Jeśli chcesz, mogę także pomóc ustawić bezpieczniejsze reguły Storage lub dodać uwierzytelnianie.
+
+## Zabezpieczenie Firebase Storage (propozycja)
+
+Domyślne reguły "allow if true" są publiczne — lepiej ograniczyć zapis tylko do uwierzytelnionych użytkowników. Najprostsza opcja to włączenie **Anonymous Authentication** i ustawienie reguł Storage tak, aby tylko uwierzytelnieni użytkownicy mogli zapisywać pliki.
+
+Przykładowe reguły (dają odczyt/ zapis tylko zalogowanym):
+
+```
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+
+Instrukcja włączenia anonimowego logowania:
+
+1. W konsoli Firebase przejdź do `Authentication` → `Sign-in method`.
+2. Włącz `Anonymous` i zapisz.
+3. W `Project settings` -> `Your apps` skopiuj `firebaseConfig` i wklej do `assets/app.js`.
+
+Klient w `assets/app.js` spróbuje automatycznego anonimowego logowania; dzięki temu użytkownicy nie muszą tworzyć kont, a jednocześnie uploady będą ograniczone do autoryzowanych sesji.
+
+Jeśli chcesz silniejszą kontrolę (np. usuwanie plików, limit rozmiaru na użytkownika), mogę przygotować bardziej zaawansowane reguły i krótką funkcję Cloud Function do czyszczenia.
